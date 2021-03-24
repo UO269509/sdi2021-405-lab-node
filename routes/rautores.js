@@ -1,23 +1,13 @@
 module.exports = function(app, swig) {
-    app.get("/autores", function(req, res) {
 
-        let autores = [ {
-            "nombre": "Francisco",
-            "grupo": "Grupo1",
-            "rol": "Cantante"
-        }, {
-            "nombre": "Edward",
-            "grupo": "Grupo1",
-            "rol": "Batería"
-        }, {
-            "nombre": "Enrique",
-            "grupo": "Grupo2",
-            "rol": "Cantante"
-        } ];
+    var autores = filtrarRoles(null);
+
+    app.get("/autores", function(req, res) {
 
         let respuesta = swig.renderFile('views/autores.html', {
             autores: autores
         });
+        autores = filtrarRoles(null);
 
         res.send(respuesta);
     });
@@ -31,7 +21,7 @@ module.exports = function(app, swig) {
     })
 
     app.post('/autor', function(req, res) {
-        let respuesta = ""
+        let respuesta = "";
         if (typeof req.body.nombre === 'undefinded' ||  req.body.nombre === null) {
             respuesta +="Nombre no enviado en la petición" + "<br>";
         } else {
@@ -50,7 +40,34 @@ module.exports = function(app, swig) {
         res.send(respuesta);
     });
 
+    app.get("/autores/filtrar/:rol", function (req, res) {
+        autores = filtrarRoles(req.params.rol);
+        res.redirect("/autores");
+    });
+
     app.get('/autores/*', function(req, res) {
         res.redirect('/autores');
     });
+
+    function filtrarRoles(rol){
+
+        let autores = [ {
+            "nombre": "Francisco",
+            "grupo": "Grupo1",
+            "rol": "Cantante"
+        }, {
+            "nombre": "Edward",
+            "grupo": "Grupo1",
+            "rol": "Batería"
+        }, {
+            "nombre": "Enrique",
+            "grupo": "Grupo2",
+            "rol": "Cantante"
+        } ];
+
+        if(rol !== null){
+            return autores.filter(autor => autor.rol.toLowerCase() === rol.toLowerCase());
+        }
+        return autores;
+    };
 };
