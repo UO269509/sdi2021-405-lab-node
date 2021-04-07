@@ -44,7 +44,7 @@ routerAudios.use(function(req, res, next) {
     let path = require('path');
     let idCancion = path.basename(req.originalUrl, '.mp3');
     gestorBD.obtenerCanciones( {"_id": mongo.ObjectID(idCancion) }, function (canciones) {
-        if(req.session.usuario && canciones[0].autor == req.session.usuario ){
+        if(req.session.usuario && canciones[0].autor === req.session.usuario ){
             next();
         } else {
             res.redirect("/tienda");
@@ -54,6 +54,18 @@ routerAudios.use(function(req, res, next) {
 
 //Aplicar routerAudios
 app.use("/audios/",routerAudios);
+
+let routerComentarios = express.Router();
+routerComentarios.use(function(req, res, next){
+    console.log("routerComentarios");
+    if (req.session.usuario) {
+        next();
+    } else {
+        res.send("Error: no se puede añadir un comentario si no se está identificado");
+    }
+});
+
+app.use("/comentarios", routerComentarios);
 
 app.use(express.static('public'));
 
@@ -66,6 +78,7 @@ app.set('crypto',crypto);
 require("./routes/rusuarios.js")(app, swig, gestorBD);
 require("./routes/rcanciones.js")(app, swig, gestorBD);
 require("./routes/rautores.js")(app, swig);
+require("./routes/rcomentarios.js")(app, swig, gestorBD);
 
 // lanzar el servidor
 app.listen(app.get('port'), function(){
