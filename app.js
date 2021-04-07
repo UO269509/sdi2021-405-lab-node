@@ -67,6 +67,22 @@ routerComentarios.use(function(req, res, next){
 
 app.use("/comentarios", routerComentarios);
 
+let routerComentarioAutor = express.Router();
+routerComentarioAutor.use(function (req, res, next) {
+    console.log("routerComentarioAutor");
+    let path = require("path");
+    let id = path.basename(req.originalUrl);
+    gestorBD.obtenerComentarios({_id: mongo.ObjectID(id)}, function (comentarios) {
+        if (comentarios[0].autor === req.session.usuario) {
+            next();
+        } else {
+            res.send("Error: no puedes eliminar un comentario que no es tuyo");
+        }
+    })
+});
+
+app.use("/comentario/borrar", routerComentarioAutor);
+
 app.use(express.static('public'));
 
 // Variables

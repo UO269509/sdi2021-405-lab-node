@@ -13,4 +13,11 @@ module.exports = function(app, swig, gestorBD) {
             }
         });
     });
+
+    app.get("/comentario/borrar/:id", function(req, res){
+        let criterio = {"_id" : gestorBD.mongo.ObjectID(req.params.id) };
+        gestorBD.eliminarComentario(criterio,function(comentario){
+            res.redirect("/tienda");
+        });
+    });
 }

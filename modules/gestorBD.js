@@ -5,6 +5,20 @@ module.exports = {
         this.mongo = mongo;
         this.app = app;
     },
+    eliminarComentario: function (criterio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get("db"), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection("comentarios");
+                //Con promesa
+                collection.deleteOne(criterio)
+                    .then(result => funcionCallback(result))
+                    .catch(err => funcionCallback(null));
+                db.close();
+            }
+        });
+    },
     obtenerComentarios: function (criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get("db"), function (err, db) {
             if (err) {
