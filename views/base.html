@@ -41,13 +41,13 @@
 
 <div class="container">
   <script>
-    var mensaje = getUrlParameter('mensaje');
-    var tipoMensaje = getUrlParameter('tipoMensaje');
+    //var mensaje = getUrlParameter('mensaje');
+    //var tipoMensaje = getUrlParameter('tipoMensaje');
     // Otra forma de recuperar los parametros de la url pero no compatible con IE
-    /* const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(location.search);
       var mensaje = params.get("mensaje");
-      var tipoMensaje = params.get("mensaje");*/
-    if ( mensaje != ""){
+      var tipoMensaje = params.get("tipoMensaje");
+    if ( mensaje != "" && mensaje != null){
       if (tipoMensaje == "" ){
         tipoMensaje = 'alert-info';
       }

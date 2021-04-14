@@ -23,9 +23,8 @@ module.exports = function(app, swig, gestorBD) {
         gestorBD.obtenerUsuarios(criterio, function(usuarios) {
             if (usuarios == null || usuarios.length == 0) {
                 req.session.usuario = null;
-                res.redirect("/identificarse" +
-                                "?mensaje=Email o password incorrecto"+
-                                "&tipoMensaje=alert-danger ");
+                req.session.errores = {mensaje: 'Email o password incorrecto', tipoMensaje: 'alert-danger'};
+                res.redirect("/error");
             } else {
                 req.session.usuario = usuarios[0].email;
                 res.redirect("/publicaciones");
@@ -35,6 +34,7 @@ module.exports = function(app, swig, gestorBD) {
 
     app.get('/desconectarse', function (req, res) {
         req.session.usuario = null;
+        req.session.errores = null;
         res.send("Usuario desconectado");
     })
 
@@ -47,7 +47,8 @@ module.exports = function(app, swig, gestorBD) {
         }
         gestorBD.insertarUsuario(usuario, function(id) {
             if (id == null){
-                res.redirect("/registrarse?mensaje=Error al registrar usuario");
+                req.session.errores = {mensaje: 'Error al registrar usuario', tipoMensaje: 'alert-danger'};
+                res.redirect("/error");
             } else {
                 res.redirect("/identificarse?mensaje=Nuevo usuario registrado");
             }
